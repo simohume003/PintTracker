@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'pint-register-v1';
-const CSV_FILE = 'pubs.csv';
+const CSV_FILE = 'guinness_venues.csv';
 const HEADERS = ['id','name','type','location','guinness_rating','visited','latitude','longitude','notes','prices','image_url','group'];
 const GROUP_NAME = 'Simon & Scotts';
 
@@ -186,9 +186,8 @@ function renderVenues() {
 function initMap() {
   if (!window.L) return;
   map = L.map('map', { scrollWheelZoom: false }).setView([53.3, -6.23], 12);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19
   }).addTo(map);
 }

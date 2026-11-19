@@ -63,6 +63,7 @@ main{max-width:1200px;margin:auto;padding:45px 28px 70px}
 /* Map */
 .map-wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#111}
 .map-wrap #map{height:390px;background:#111}
+.map-wrap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.95)}
 .map-note{padding:10px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
 .leaflet-container{background:#111}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--text)}

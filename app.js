@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'pint-register-v1';
-const CSV_FILE = 'guinness_venues.csv';
+const CSV_FILE = 'pubs.csv';
 const HEADERS = ['id','name','type','location','guinness_rating','visited','latitude','longitude','notes','prices','image_url','group'];
 const GROUP_NAME = 'Simon & Scotts';
 

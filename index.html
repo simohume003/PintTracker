@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111815">
+  <title>The Pint Register</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-icon">🍺</span><span>THE PINT REGISTER<small>DUBLIN • GUINNESS TRACKER</small></span></a>
+  <nav><a href="#map-section">Map</a><a href="#venues-section">Venues</a><a href="#leaderboard-section">Leaderboard</a></nav>
+  <button class="button button-outline" id="exportBtn">Export CSV ↓</button>
+</header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">YOUR PERSONAL PUB GUIDE</p><h1>Good pints.<br><em>Honest ratings.</em></h1>
+      <p class="intro">A running record of the places, the pints and the prices. One venue only counts towards your unique places once — repeat visits never inflate that number.</p></div>
+    <div class="hero-stamp"><span>EST.</span><strong>2026</strong><small>DUBLIN EDITION</small></div>
+  </section>
+
+  <section class="stats-grid" aria-label="Dashboard statistics">
+    <article class="stat-card stat-feature"><span class="stat-label">UNIQUE PLACES VISITED</span><strong id="uniqueCount">0</strong><span class="stat-foot">Each venue counted once</span></article>
+    <article class="stat-card"><span class="stat-label">VENUES IN REGISTER</span><strong id="venueCount">0</strong><span class="stat-foot">Including places to try</span></article>
+    <article class="stat-card"><span class="stat-label">GUINNESS RATINGS</span><strong id="ratingCount">0</strong><span class="stat-foot">Scored from 1 to 5</span></article>
+    <article class="stat-card"><span class="stat-label">AVERAGE RECORDED PRICE</span><strong id="averagePrice">—</strong><span class="stat-foot">Across dated entries</span></article>
+  </section>
+
+  <section id="map-section" class="section">
+    <div class="section-heading"><div><p class="eyebrow">EXPLORE THE PATCH</p><h2>Your Dublin map</h2></div><span class="muted">Pins appear when a venue has map coordinates</span></div>
+    <div class="map-wrap"><div id="map"></div><div class="map-note">Add a venue's latitude and longitude in its details to place an exact pin. No guessed locations.</div></div>
+  </section>
+
+  <section id="leaderboard-section" class="section">
+    <div class="section-heading"><div><p class="eyebrow">THE POUR DECIDES</p><h2>Guinness leaderboard</h2></div><span class="muted">Consistency over a lucky pint</span></div>
+    <div id="leaderboard" class="leaderboard"></div>
+  </section>
+
+  <section id="venues-section" class="section">
+    <div class="section-heading"><div><p class="eyebrow">THE REGISTER</p><h2>All venues</h2></div><button class="button" id="addVenueBtn">＋ Add venue</button></div>
+    <div class="toolbar"><input id="searchInput" type="search" placeholder="Search venues…"><select id="filterSelect"><option value="all">All venues</option><option value="visited">Visited</option><option value="not-visited">Not visited</option><option value="rated">Rated Guinness</option><option value="unrated">Not rated</option></select></div>
+    <div id="venueList" class="venue-list"></div>
+  </section>
+
+  <section class="section howto">
+    <div><p class="eyebrow">BUILT TO KEEP GROWING</p><h2>Every visit has a story.</h2><p>Open any venue to add a visit, record a Guinness price and date, update its rating, or add notes. Price entries are kept as history rather than overwriting older prices.</p></div>
+    <div class="howto-side"><strong>1 → 5</strong><span>Guinness reliability</span><strong>€ + date</strong><span>Price history</span><strong>Once</strong><span>Unique venue count</span></div>
+  </section>
+</main>
+<footer><span>THE PINT REGISTER</span><span>Made for the love of a decent pint.</span><button id="importBtn" class="text-button">Import CSV</button><input type="file" id="importFile" accept=".csv,text/csv" hidden></footer>
+
+<dialog id="venueDialog">
+  <form method="dialog" id="venueForm">
+    <div class="dialog-head"><div><p class="eyebrow">VENUE DETAILS</p><h2 id="dialogTitle">Venue</h2></div><button class="close" value="cancel" aria-label="Close">×</button></div>
+    <input type="hidden" id="venueId">
+    <div class="form-grid">
+      <label class="wide">Venue name<input id="venueName" required></label>
+      <label>Type<select id="venueType"><option>Pub</option><option>Bar</option><option>Nightclub</option><option>Restaurant / bar</option><option>Restaurant (honourable mention)</option></select></label>
+      <label>Visited?<select id="venueVisited"><option value="false">Not yet</option><option value="true">Yes</option></select></label>
+      <label class="wide">Area / address<input id="venueLocation" placeholder="e.g. Dalkey, Dublin"></label>
+      <label class="wide">Guinness reliability<select id="venueRating"><option value="">Not rated / haven't tried</option><option value="1">1 — Terrible</option><option value="2">2 — Not much better</option><option value="3">3 — OK</option><option value="4">4 — Good</option><option value="5">5 — Reliable</option></select></label>
+      <label>Latitude<input id="venueLat" type="number" step="any" placeholder="Optional"></label>
+      <label>Longitude<input id="venueLng" type="number" step="any" placeholder="Optional"></label>
+      <label class="wide">Notes<textarea id="venueNotes" rows="3" placeholder="Anything worth remembering…"></textarea></label>
+    </div>
+    <div class="price-panel"><h3>Guinness price history</h3><p class="muted">Add a price whenever you find it. The date is saved with the price.</p>
+      <div class="price-entry"><label>Price (€)<input id="priceAmount" type="number" min="0" step="0.01" placeholder="6.50"></label><label>Date<input id="priceDate" type="date"></label><button type="button" id="addPriceBtn" class="button button-small">Add price</button></div>
+      <div id="priceHistory" class="price-history"></div>
+    </div>
+    <div class="dialog-actions"><button class="button button-outline" type="button" id="deleteVenueBtn">Delete venue</button><span></span><button class="button" type="submit" value="save">Save changes</button></div>
+  </form>
+</dialog>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body></html>
